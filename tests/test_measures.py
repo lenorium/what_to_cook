@@ -1,62 +1,80 @@
-from fastapi.testclient import TestClient
+import pytest
 
-import exceptions
-from api.endpoints import MEASURES
-from app import app
-from db.repositories.measures_repository import MeasuresRepository
-from tests.fake_db import FakeMeasureRepository
-
-app.dependency_overrides[MeasuresRepository] = FakeMeasureRepository
+from api.endpoints import MEASURES, MEASURE_BY_ID
+from tests.fake_db import measure as fake_measure
+from tests.base_test import client
 
 
-client = TestClient(app)
-
-
-# def test_read_inexistent_recipe():
-#     response = client.get(RECIPE_BY_ID.format(recipe_id=0))
-#     assert response.status_code == 404
-#     assert response.json() == {'detail': exceptions.ITEM_NOT_FOUND}
-#
-#
-# def test_get_recipe():
-#     response = client.get(RECIPE_BY_ID.format(recipe_id=1))
-#     assert response.status_code == 200
-    # assert response.json() == {'name': 'sandwich'}
-
-
-# def test_get_recipes_by_ingredient():
-#     response = client.get(RECIPES, params={'ingredient': ''})
-
-
-def test_create_measure():
-    json = {'name': 'spn'}
-    response = client.post(MEASURES, json=json)
+@pytest.mark.parametrize('test_input', ['spn', 'big spn'])
+def test_create_measure_positive(test_input):
+    response = client.post(MEASURES, json={'name': test_input})
     assert response.status_code == 201
 
 
-def test_create_multiple_words_measure():
-    json = {'name': 'big spn'}
-    response = client.post(MEASURES, json=json)
-    assert response.status_code == 201
-
-
-def test_create_empty_measure():
-    json = {'name': ''}
-    response = client.post(MEASURES, json=json)
+@pytest.mark.parametrize('test_input, expected', [('123', 'Name must contain only letters'),
+                                                  ('', 'Name is required'),
+                                                  (' ', 'Name is required')])
+def test_create_measure_invalid_name(test_input, expected):
+    response = client.post(MEASURES, json={'name': test_input})
     assert response.status_code == 400
-    assert response.text == f'{{"detail":"{exceptions.NAME_IS_REQUIRED}"}}'
+    assert response.text == f'{{"detail":"{expected}"}}'
 
 
-def test_create_space_measure():
-    json = {'name': ' '}
-    response = client.post(MEASURES, json=json)
+def test_put_measure_positive():
+    response = client.put(MEASURE_BY_ID.format(measure_id=fake_measure.measure_id), json={'name': 'qwe'})
+    assert response.status_code == 200
+
+
+def test_put_measure_inexistent_id():
+    response = client.put(MEASURE_BY_ID.format(measure_id=0), json={'name': 'qwe'})
+    assert response.status_code == 422
+    assert response.text == '{"detail":"Invalid measure_id"}'
+
+
+def test_put_measure_non_unique_name():
+    response = client.put(MEASURE_BY_ID.format(measure_id=fake_measure.measure_id), json={'name': fake_measure.name})
+    assert response.status_code == 409
+
+
+@pytest.mark.parametrize('test_input, expected', [('123', 'Name must contain only letters'),
+                                                  ('', 'Name is required'),
+                                                  (' ', 'Name is required')])
+def test_put_measure_invalid_name(test_input, expected):
+    response = client.put(MEASURE_BY_ID.format(measure_id=0), json={'name': test_input})
     assert response.status_code == 400
-    assert response.text == f'{{"detail":"{exceptions.NAME_IS_REQUIRED}"}}'
+    assert response.text == f'{{"detail":"{expected}"}}'
 
 
-def test_create_numeric_measure():
-    json = {'name': '123'}
-    response = client.post(MEASURES, json=json)
+@pytest.mark.parametrize('test_input', ['qwe', 1.1])
+def test_put_measure_non_int_id(test_input):
+    response = client.put(MEASURE_BY_ID.format(measure_id=test_input), json={'name': 'fake'})
+    assert response.status_code == 422
+
+
+def test_get_get_measures():
+    response = client.get(MEASURES)
+    assert response.status_code == 200
+
+
+@pytest.mark.parametrize('test_input', ['qwe', 1.1])
+def test_get_measures_non_int_limit(test_input):
+    response = client.get(MEASURES, params={'limit': test_input})
+    assert response.status_code == 422
+
+
+def test_get_measures_negative_limit():
+    response = client.get(MEASURES, params={'limit': -1})
     assert response.status_code == 400
-    assert response.text == f'{{"detail":"{exceptions.INVALID_NAME}"}}'
+    assert response.text == '{"detail":"limit must not be negative"}'
 
+
+@pytest.mark.parametrize('test_input', ['qwe', 1.1])
+def test_get_measures_non_int_offset(test_input):
+    response = client.get(MEASURES, params={'offset': test_input})
+    assert response.status_code == 422
+
+
+def test_get_measures_negative_offset():
+    response = client.get(MEASURES, params={'offset': -1})
+    assert response.status_code == 400
+    assert response.text == '{"detail":"offset must not be negative"}'

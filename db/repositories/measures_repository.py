@@ -4,23 +4,21 @@ from db.repositories.base_repository import BaseRepository
 
 class MeasuresRepository(BaseRepository):
     def create_measure(self, measure_name: str):
-        val = prepare_name(measure_name)
-
         sql_stmnt = f'''insert into {Measure.__tablename__} (name)
-                        values ('{val}')'''
+                        values ('{measure_name}')'''
 
-        _, err = self.execute_sql_statement(sql_stmnt)
-        return err
+        return self.execute_sql_statement(sql_stmnt)
 
     def update_measure(self, measure_id: int, new_name: str):
-        val = prepare_name(new_name)
-
         sql_stmnt = f'''update {Measure.__tablename__}
-                        set name = '{val}'
+                        set name = '{new_name}'
                         where measure_id = '{measure_id}'
+                        returning measure_id
                     '''
-        _, err = self.execute_sql_statement(sql_stmnt)
-        return err
+        res, err = self.execute_sql_statement(sql_stmnt)
+
+        updated_row = res.first() if res is not None else None
+        return updated_row, err
 
     def get_measures(self, limit: int, offset: int):
         sql_stmnt = f'''select * 
@@ -28,7 +26,3 @@ class MeasuresRepository(BaseRepository):
                         limit {limit} offset {offset}'''
         result, err = self.execute_sql_statement(sql_stmnt)
         return result.all(), err
-
-
-def prepare_name(value: str):
-    return value.strip().lower()

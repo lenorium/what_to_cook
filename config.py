@@ -8,6 +8,7 @@ class __Settings(BaseSettings):
     db_user: str = Field(env='POSTGRES_USER')
     db_password: str = Field(env='POSTGRES_PASSWORD')
     api_port: int = Field(env='API_PORT')
+    api_host: str = Field(env='API_HOST')
     log_level: str = Field(env='LOG_LEVEL')
 
 

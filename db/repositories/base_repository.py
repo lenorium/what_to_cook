@@ -1,6 +1,5 @@
 from fastapi import Depends
 
-import exceptions
 from db import database
 
 
@@ -14,6 +13,6 @@ class BaseRepository:
         try:
             res = self.session.execute(sql_stmnt)
         except Exception as e:
-            err = exceptions.handle_exception(e)
+            err = e
         finally:
             return res, err
