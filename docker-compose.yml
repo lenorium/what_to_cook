@@ -1,14 +1,14 @@
 version: '3.9'
 
 services:
-#  api:
-#    build: .
-#    ports:
-#      - "8000:8000"
-#    depends_on:
-#      - db
-#    env_file:
-#      - .env
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    env_file:
+      - .env
   db:
     image: postgres:latest
     restart: on-failure
