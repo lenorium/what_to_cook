@@ -20,7 +20,7 @@ class MeasureService:
         err = exceptions.map_exception(err)
 
         if not err and not res:
-            err = exceptions.details(status_code=422, msg='Invalid measure_id')
+            err = exceptions.details(status_code=422, msg=exceptions.INVALID_ID)
         return res, err
 
     def get_measures(self, limit: int, offset: int):

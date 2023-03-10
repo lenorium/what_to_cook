@@ -17,12 +17,15 @@ class MeasuresRepository(BaseRepository):
                     '''
         res, err = self.execute_sql_statement(sql_stmnt)
 
-        updated_row = res.first() if res is not None else None
+        if updated_row := res:
+            updated_row = updated_row.first()
+
         return updated_row, err
 
     def get_measures(self, limit: int, offset: int):
         sql_stmnt = f'''select * 
                         from {Measure.__tablename__}
+                        order by name
                         limit {limit} offset {offset}'''
         result, err = self.execute_sql_statement(sql_stmnt)
         return result.all(), err
