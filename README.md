@@ -36,6 +36,7 @@ and every time you need an idea the app will choose it for you.
 **Additionally**
 
 Also you can see structure of DB tables using PGAdmin:
+
 1. Open http://0.0.0.0:8001/ (or http://127.0.0.1:8001/) in your browser.
 2. Enter login and password. You can find it in ```.env``` file. 
 3. When dashboard is opened press ```Add New Server``` button.
