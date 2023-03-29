@@ -3,7 +3,8 @@ def is_empty_name(value: str) -> bool:
 
 
 def is_valid_name(value: str) -> bool:
-    return value.isalpha()
+    # допустимы только пробелы и буквы
+    return value.replace(' ', '').isalpha()
 
 
 def prepare_name(value: str) -> str:

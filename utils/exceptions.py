@@ -4,6 +4,7 @@ from collections import namedtuple
 ITEM_NOT_FOUND = 'Item not found'
 NAME_IS_REQUIRED = 'Name is required'
 INVALID_NAME = 'Name must contain only letters'
+INVALID_ID = 'Invalid id'
 NUM_VALUE_MUST_NOT_BE_NEGATIVE = '{value} must not be negative'
 
 details = namedtuple('details', 'status_code msg')
