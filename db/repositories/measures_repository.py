@@ -4,28 +4,16 @@ from db.repositories.base_repository import BaseRepository
 
 class MeasuresRepository(BaseRepository):
     def create_measure(self, measure_name: str):
-        sql_stmnt = f'''insert into {Measure.__tablename__} (name)
-                        values ('{measure_name}')'''
-
-        return self.execute_sql_statement(sql_stmnt)
+        return self.add(Measure(measure_name))
 
     def update_measure(self, measure_id: int, new_name: str):
-        sql_stmnt = f'''update {Measure.__tablename__}
-                        set name = '{new_name}'
-                        where measure_id = '{measure_id}'
-                        returning measure_id
-                    '''
-        res, err = self.execute_sql_statement(sql_stmnt)
+        res, err = self.get_by_id(Measure, measure_id)
+        if not res:
+            return res, err
 
-        if updated_row := res:
-            updated_row = updated_row.first()
-
-        return updated_row, err
+        res.name = new_name
+        res, err = self.add(res)
+        return res, err
 
     def get_measures(self, limit: int, offset: int):
-        sql_stmnt = f'''select * 
-                        from {Measure.__tablename__}
-                        order by name
-                        limit {limit} offset {offset}'''
-        result, err = self.execute_sql_statement(sql_stmnt)
-        return result.all(), err
+        return self.get_all(Measure, limit=limit, offset=offset)

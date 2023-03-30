@@ -1,7 +1,7 @@
 from fastapi import Depends
 
-from utils import exceptions, validations
 from db.repositories.measures_repository import MeasuresRepository
+from utils import exceptions
 
 
 class MeasureService:
@@ -9,18 +9,16 @@ class MeasureService:
         self.repository = repository
 
     def create_measure(self, measure_name: str):
-        val = validations.prepare_name(measure_name)
-        _, err = self.repository.create_measure(val)
+        res, err = self.repository.create_measure(measure_name)
         err = exceptions.map_exception(err)
-        return _, err
+        return res, err
 
     def update_measure(self, measure_id: int, new_name: str):
-        val = validations.prepare_name(new_name)
-        res, err = self.repository.update_measure(measure_id, val)
+        res, err = self.repository.update_measure(measure_id, new_name)
         err = exceptions.map_exception(err)
 
         if not err and not res:
-            err = exceptions.details(status_code=422, msg=exceptions.INVALID_ID)
+            err = exceptions.details(status_code=422, msg=exceptions.COULD_NOT_UPDATE)
         return res, err
 
     def get_measures(self, limit: int, offset: int):

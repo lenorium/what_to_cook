@@ -1,13 +1,14 @@
 import uvicorn
 from fastapi import FastAPI
 
-from api.routers import measures, ingredients
+from api.routers import measures, ingredients, recipes
 from config import settings
 
 app = FastAPI()
 
 app.include_router(measures.router)
 app.include_router(ingredients.router)
+app.include_router(recipes.router)
 
 
 @app.get('/', tags=['Home'])

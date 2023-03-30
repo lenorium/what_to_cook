@@ -3,29 +3,17 @@ from db.repositories.base_repository import BaseRepository
 
 
 class IngredientsRepository(BaseRepository):
-    def create_ingredient(self, ingredient_name: str):
-        sql_stmnt = f'''insert into {Ingredient.__tablename__} (name)
-                    values ('{ingredient_name}')
-                    '''
-        return self.execute_sql_statement(sql_stmnt)
+    def create_ingredient(self, name: str):
+        return self.add(Ingredient(name))
 
     def update_ingredient(self, ingredient_id: int, new_name: str):
-        sql_stmnt = f'''update {Ingredient.__tablename__}
-                        set name = '{new_name}'
-                        where ingredient_id = '{ingredient_id}'
-                        returning ingredient_id
-                    '''
-        res, err = self.execute_sql_statement(sql_stmnt)
+        res, err = self.get_by_id(Ingredient, ingredient_id)
+        if not res:
+            return res, err
 
-        if updated_row := res:
-            updated_row = updated_row.first()
-
-        return updated_row, err
+        res.name = new_name
+        res, err = self.add(res)
+        return res, err
 
     def get_ingredients(self, limit: int, offset: int):
-        sql_stmnt = f'''select * 
-                        from {Ingredient.__tablename__}
-                        order by name
-                        limit {limit} offset {offset}'''
-        result, err = self.execute_sql_statement(sql_stmnt)
-        return result.all(), err
+        return self.get_all(Ingredient, limit=limit, offset=offset)
