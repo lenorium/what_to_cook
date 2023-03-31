@@ -29,5 +29,5 @@ class DbInstance:
 
 
 def get_db():
-    with DbInstance().session_maker.begin() as session:
+    with DbInstance().session_maker() as session:
         yield session

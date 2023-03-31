@@ -1,7 +1,7 @@
 from fastapi import Depends
 
 from db.repositories.ingredients_repository import IngredientsRepository
-from utils import validations, exceptions
+from utils import exceptions
 
 
 class IngredientsService:
@@ -9,19 +9,16 @@ class IngredientsService:
         self.repository = repository
 
     def create_ingredient(self, ingredient_name: str):
-        val = validations.prepare_name(ingredient_name)
-
-        _, err = self.repository.create_ingredient(val)
+        res, err = self.repository.create_ingredient(ingredient_name)
         err = exceptions.map_exception(err)
-        return _, err
+        return res, err
 
     def update_ingredient(self, ingredient_id: int, new_name: str):
-        val = validations.prepare_name(new_name)
-        res, err = self.repository.update_ingredient(ingredient_id, val)
+        res, err = self.repository.update_ingredient(ingredient_id, new_name)
         err = exceptions.map_exception(err)
 
         if not err and not res:
-            err = exceptions.details(status_code=422, msg=exceptions.INVALID_ID)
+            err = exceptions.details(status_code=422, msg=exceptions.COULD_NOT_UPDATE)
         return res, err
 
     def get_ingredients(self, limit: int, offset: int):

@@ -2,38 +2,31 @@ from fastapi import APIRouter, Depends, HTTPException
 from starlette import status
 
 from api.endpoints import INGREDIENTS, INGREDIENT_BY_ID
-from api.schemas import Ingredient
+from api.schemas import Ingredient, IngredientFull
 from services.ingredients_service import IngredientsService
-from utils import validations, exceptions
+from utils import exceptions
 
 router = APIRouter(tags=['Ingredients'])
 
 
-@router.post(INGREDIENTS, status_code=status.HTTP_201_CREATED, response_model=None)
+@router.post(INGREDIENTS, status_code=status.HTTP_201_CREATED, response_model=IngredientFull)
 def create_ingredient(ingredient: Ingredient, service: IngredientsService = Depends(IngredientsService)):
-    if validations.is_empty_name(ingredient.name):
-        raise HTTPException(status_code=400, detail=exceptions.NAME_IS_REQUIRED)
-    if not validations.is_valid_name(ingredient.name):
-        raise HTTPException(status_code=400, detail=exceptions.INVALID_NAME)
-
-    _, err = service.create_ingredient(ingredient.name)
+    res, err = service.create_ingredient(ingredient.name)
     if err:
         raise HTTPException(status_code=err.status_code, detail=err.msg)
+    return res
 
 
-@router.put(INGREDIENT_BY_ID, status_code=status.HTTP_200_OK, response_model=None)
-def update_ingredient(ingredient_id: int, ingredient: Ingredient, service: IngredientsService = Depends(IngredientsService)):
-    if validations.is_empty_name(ingredient.name):
-        raise HTTPException(status_code=400, detail=exceptions.NAME_IS_REQUIRED)
-    if not validations.is_valid_name(ingredient.name):
-        raise HTTPException(status_code=400, detail=exceptions.INVALID_NAME)
-
-    _, err = service.update_ingredient(ingredient_id, ingredient.name)
+@router.put(INGREDIENT_BY_ID, status_code=status.HTTP_200_OK, response_model=IngredientFull)
+def update_ingredient(ingredient_id: int, ingredient: Ingredient,
+                      service: IngredientsService = Depends(IngredientsService)):
+    res, err = service.update_ingredient(ingredient_id, ingredient.name)
     if err:
         raise HTTPException(status_code=err.status_code, detail=err.msg)
+    return res
 
 
-@router.get(INGREDIENTS, status_code=status.HTTP_200_OK, response_model=list)
+@router.get(INGREDIENTS, status_code=status.HTTP_200_OK, response_model=list[IngredientFull])
 def get_ingredients(limit: int = 10, offset: int = 0, service: IngredientsService = Depends(IngredientsService)):
     max_limit = 20
     if limit > max_limit:

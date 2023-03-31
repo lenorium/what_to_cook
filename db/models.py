@@ -11,6 +11,10 @@ class Ingredient(Base):
     name = Column(String, unique=True, nullable=False)
     quantities = relationship('Quantity')
 
+    def __init__(self, name):
+        super().__init__()
+        self.name = name
+
 
 class Measure(Base):
     __tablename__ = 'measures'
@@ -40,16 +44,16 @@ class Recipe(Base):
 
 
 class Quantity(Base):
-    __tablename__ = 'quantity'
+    __tablename__ = 'quantitiies'
 
-    quantity_id = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
+    # quantity_id = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
     quantity = Column(Integer, nullable=False)
-    recipe_id = Column(Integer, ForeignKey('recipes.recipe_id'), nullable=False)
-    measure_id = Column(Integer, ForeignKey('measures.measure_id'), nullable=False)
-    ingredient_id = Column(Integer, ForeignKey('ingredients.ingredient_id'), nullable=False)
+    recipe_id = Column(Integer, ForeignKey('recipes.recipe_id'), nullable=False, primary_key=True)
+    measure_id = Column(Integer, ForeignKey('measures.measure_id'), nullable=False, primary_key=True)
+    ingredient_id = Column(Integer, ForeignKey('ingredients.ingredient_id'), nullable=False, primary_key=True)
 
-    def __init__(self, quantity, measure: Measure, ingredient: Ingredient):
+    def __init__(self, quantity, measure_id: int, ingredient_id: int):
         super().__init__()
         self.quantity = quantity
-        self.measure_id = measure.measure_id
-        self.ingredient_id = ingredient.ingredient_id
+        self.measure_id = measure_id
+        self.ingredient_id = ingredient_id

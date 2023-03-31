@@ -5,7 +5,7 @@ from tests.base_test import client
 from tests.fake_db import ingredient as fake_ingredient
 
 
-@pytest.mark.parametrize('test_input', ['spn', 'big spn'])
+@pytest.mark.parametrize('test_input', ['pepper', 'black pepper'])
 def test_create_ingredient_positive(test_input):
     response = client.post(INGREDIENTS, json={'name': test_input})
     assert response.status_code == 201
@@ -32,7 +32,7 @@ def test_put_ingredient_inexistent_id():
         ingredient_id=0),
         json={'name': 'qwe'})
     assert response.status_code == 422
-    assert response.text == '{"detail":"Invalid id"}'
+    assert response.text == '{"detail":"Could not update"}'
 
 
 def test_put_ingredient_non_unique_name():

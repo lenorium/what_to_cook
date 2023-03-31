@@ -32,7 +32,7 @@ def test_put_measure_inexistent_id():
         measure_id=0),
         json={'name': 'qwe'})
     assert response.status_code == 422
-    assert response.text == '{"detail":"Invalid id"}'
+    assert response.text == '{"detail":"Could not update"}'
 
 
 def test_put_measure_non_unique_name():
