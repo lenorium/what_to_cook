@@ -2,7 +2,7 @@ from db.models import Recipe
 from db.repositories.base_repository import BaseRepository
 
 
-class RecipesRepository(BaseRepository):
+class RecipeRepository(BaseRepository):
 
     def create_recipe(self, recipe: Recipe):
         return self.add(recipe)

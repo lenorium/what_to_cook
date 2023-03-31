@@ -3,12 +3,12 @@ from fastapi import Depends
 from api import schemas
 from api.schemas import Recipe
 from db import models
-from db.repositories.recipes_repository import RecipesRepository
+from db.repositories.recipes_repository import RecipeRepository
 from utils import exceptions
 
 
 class RecipesService:
-    def __init__(self, repository=Depends(RecipesRepository)):
+    def __init__(self, repository=Depends(RecipeRepository)):
         self.repository = repository
 
     def create_recipe(self, recipe: schemas.Recipe):

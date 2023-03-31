@@ -1,5 +1,7 @@
+from typing import Optional
+
 from fastapi import HTTPException
-from pydantic import BaseModel, validator
+from pydantic import BaseModel, validator, Field
 
 from utils import exceptions
 
@@ -46,12 +48,12 @@ class Quantity(BaseModel):
 
 
 class Recipe(BaseModel):
-    name: str
-    description: str
-    quantities: list[Quantity]
+    name: str = Field(max_length=80)
+    description: Optional[str]
+    quantities: Optional[list[Quantity]] = []
 
     @validator('name')
-    def transform(cls, value: str):
+    def check_name_not_empty(cls, value: str):
         if is_empty_name(value):
             raise HTTPException(status_code=400, detail=exceptions.NAME_IS_REQUIRED)
         return value

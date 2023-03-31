@@ -9,7 +9,7 @@ from utils import exceptions
 router = APIRouter(tags=['Ingredients'])
 
 
-@router.post(INGREDIENTS, status_code=status.HTTP_201_CREATED, response_model=None)
+@router.post(INGREDIENTS, status_code=status.HTTP_201_CREATED, response_model=IngredientFull)
 def create_ingredient(ingredient: Ingredient, service: IngredientsService = Depends(IngredientsService)):
     res, err = service.create_ingredient(ingredient.name)
     if err:
@@ -17,7 +17,7 @@ def create_ingredient(ingredient: Ingredient, service: IngredientsService = Depe
     return res
 
 
-@router.put(INGREDIENT_BY_ID, status_code=status.HTTP_200_OK, response_model=None)
+@router.put(INGREDIENT_BY_ID, status_code=status.HTTP_200_OK, response_model=IngredientFull)
 def update_ingredient(ingredient_id: int, ingredient: Ingredient,
                       service: IngredientsService = Depends(IngredientsService)):
     res, err = service.update_ingredient(ingredient_id, ingredient.name)
