@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy import Column, Integer, String, ForeignKey, Table
 from sqlalchemy.orm import declarative_base, relationship
 
 Base = declarative_base()
@@ -34,7 +34,7 @@ class Recipe(Base):
     recipe_id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(80), nullable=False)
     description = Column(String)
-    quantities = relationship('Quantity')
+    quantities = relationship('Quantity', cascade='all, delete-orphan')
 
     def __init__(self, name, description, quantities: list):
         super().__init__()
@@ -44,7 +44,7 @@ class Recipe(Base):
 
 
 class Quantity(Base):
-    __tablename__ = 'quantitiies'
+    __tablename__ = 'quantities'
 
     # quantity_id = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
     quantity = Column(Integer, nullable=False)

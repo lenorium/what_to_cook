@@ -1,5 +1,6 @@
 from db.models import Recipe
 from db.repositories.base_repository import BaseRepository
+import random
 
 
 class RecipeRepository(BaseRepository):
@@ -18,4 +19,14 @@ class RecipeRepository(BaseRepository):
         res, err = self.add(res)
         return res, err
 
+    def get_recipes(self, limit: int, offset: int):
+        return self.get_all(Recipe, limit=limit, offset=offset)
 
+    def get_recipe_by_id(self, recipe_id):
+        return self.get_by_id(Recipe, recipe_id)
+
+    def get_random_recipe(self):
+        count = self.session.query(Recipe).count()
+
+        offset = random.randint(0, count - 1)
+        return self.get_all(Recipe, limit=1, offset=offset)

@@ -48,6 +48,7 @@ class Quantity(BaseModel):
 
 
 class Recipe(BaseModel):
+    recipe_id = int
     name: str = Field(max_length=80)
     description: Optional[str]
     quantities: Optional[list[Quantity]] = []
@@ -57,6 +58,9 @@ class Recipe(BaseModel):
         if is_empty_name(value):
             raise HTTPException(status_code=400, detail=exceptions.NAME_IS_REQUIRED)
         return value
+
+    class Config:
+        orm_mode = True
 
 
 def is_empty_name(value: str) -> bool:
