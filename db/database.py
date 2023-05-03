@@ -13,16 +13,20 @@ class DbInstance:
         if cls._instance is None:
             cls._instance = super(DbInstance, cls).__new__(cls)
 
-            connect_url = {
-                'drivername': 'postgresql+psycopg2',
-                'host': settings.db_host,
-                'port': settings.db_port,
-                'username': settings.db_user,
-                'password': settings.db_password,
-                'database': settings.db_name
-            }
+            if settings.db_url:
+                url = settings.db_url
+            else:
+                connect_url = {
+                    'drivername': 'postgresql+psycopg2',
+                    'host': settings.db_host,
+                    'port': settings.db_port,
+                    'username': settings.db_user,
+                    'password': settings.db_password,
+                    'database': settings.db_name
+                }
+                url = URL.create(**connect_url)
             echo = settings.log_level == 'debug'
-            cls._instance.engine = create_engine(URL.create(**connect_url), echo=echo)
+            cls._instance.engine = create_engine(url, echo=echo)
             cls._instance.session_maker = sessionmaker(bind=cls._instance.engine)
             Base.metadata.create_all(cls._instance.engine)
         return cls._instance

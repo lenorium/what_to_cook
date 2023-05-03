@@ -2,6 +2,7 @@ from pydantic import BaseSettings, Field
 
 
 class __Settings(BaseSettings):
+    db_url: str = Field(env='DATABASE_URL')
     db_host: str = Field(env='POSTGRES_HOST')
     db_port: str = Field(env='POSTGRES_PORT')
     db_name: str = Field(env='POSTGRES_DB')
