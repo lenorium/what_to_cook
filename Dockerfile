@@ -11,7 +11,7 @@ COPY . /usr/src/app/
 
 RUN pip install --no-cache-dir -r requirements.txt
 
-EXPOSE 8000
+EXPOSE API_PORT $API_PORT
 
 #ENTRYPOINT ["./wait-for-it/wait-for-it.sh", "$POSTGRES_HOST:$POSTGRES_PORT", "--", "python", "app.py"]
 ENTRYPOINT ["python", "app.py"]
