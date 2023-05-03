@@ -1,5 +1,7 @@
-from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy import Column, Integer, String, ForeignKey, Table
 from sqlalchemy.orm import declarative_base, relationship
+
+from api.meals import Meal
 
 Base = declarative_base()
 
@@ -34,17 +36,19 @@ class Recipe(Base):
     recipe_id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(80), nullable=False)
     description = Column(String)
-    quantities = relationship('Quantity')
+    meals = Column(Integer, default=Meal.default(), nullable=False)
+    quantities = relationship('Quantity', cascade='all, delete-orphan')
 
-    def __init__(self, name, description, quantities: list):
+    def __init__(self, name: str, description: str, meals: int, quantities: list):
         super().__init__()
         self.name = name
         self.description = description
+        self.meals = meals
         self.quantities = quantities
 
 
 class Quantity(Base):
-    __tablename__ = 'quantitiies'
+    __tablename__ = 'quantities'
 
     # quantity_id = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
     quantity = Column(Integer, nullable=False)

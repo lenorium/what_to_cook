@@ -3,3 +3,4 @@ uvicorn
 sqlalchemy==1.4.40
 psycopg2
 pytest
+alembic

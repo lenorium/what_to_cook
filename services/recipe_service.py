@@ -1,7 +1,6 @@
 from fastapi import Depends
 
 from api import schemas
-from api.schemas import Recipe
 from db import models
 from db.repositories.recipes_repository import RecipeRepository
 from utils import exceptions
@@ -26,3 +25,11 @@ class RecipesService:
             err = exceptions.details(status_code=422, msg=exceptions.COULD_NOT_UPDATE)
         return res, err
 
+    def get_recipes(self, limit: int, offset: int):
+        return self.repository.get_recipes(limit, offset)
+
+    def get_recipe_by_id(self, recipe_id):
+        return self.repository.get_recipe_by_id(recipe_id)
+
+    def get_random_recipe(self):
+        return self.repository.get_random_recipe()
