@@ -35,7 +35,7 @@ def update_recipe(recipe_id: int, recipe: Recipe, service: RecipesService = Depe
 
 
 @router.get(RECIPE_BY_ID, status_code=status.HTTP_200_OK, response_model=Recipe)
-def get_recipe_by_id(recipe_id: int = Path(None), service: RecipesService = Depends(RecipesService)):
+def get_recipe_by_id(recipe_id: int, service: RecipesService = Depends(RecipesService)):
     res, err = service.get_recipe_by_id(recipe_id)
     if not res:
         raise HTTPException(status_code=404, detail=exceptions.ITEM_NOT_FOUND)
