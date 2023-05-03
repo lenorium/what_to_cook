@@ -6,8 +6,8 @@ WORKDIR /usr/src/app/
 COPY . /usr/src/app/
 
 #бд не всегда успевает подняться перед запуском приложения, поэтому ждем
-RUN #git clone https://github.com/vishnubob/wait-for-it.git
-RUN #chmod +x ./wait-for-it/wait-for-it.sh
+#RUN #git clone https://github.com/vishnubob/wait-for-it.git
+#RUN #chmod +x ./wait-for-it/wait-for-it.sh
 
 RUN pip install --no-cache-dir -r requirements.txt
 
